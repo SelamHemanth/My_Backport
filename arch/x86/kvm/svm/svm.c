@@ -268,7 +268,7 @@ static inline void invlpga(unsigned long addr, u32 asid)
 static int get_max_npt_level(void)
 {
 #ifdef CONFIG_X86_64
-	return PT64_ROOT_4LEVEL;
+	return pgtable_l5_enabled() ? PT64_ROOT_5LEVEL : PT64_ROOT_4LEVEL;
 #else
 	return PT32E_ROOT_LEVEL;
 #endif
@@ -455,14 +455,6 @@ static int has_svm(void)
 
 	if (!cpu_has_svm(&msg)) {
 		printk(KERN_INFO "has_svm: %s\n", msg);
-		return 0;
-	}
-
-	if (cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT)) {
-		if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
-			pr_info("KVM is unsupported when running as an CSV guest\n");
-		else
-			pr_info("KVM is unsupported when running as an SEV guest\n");
 		return 0;
 	}
 
