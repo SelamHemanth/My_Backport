@@ -1101,7 +1101,8 @@ static void init_amd(struct cpuinfo_x86 *c)
 		setup_force_cpu_bug(X86_BUG_DIV0);
 	}
 
-	zenbleed_check(c);
+	/* AMD CPUs don't need fencing after x2APIC/TSC_DEADLINE MSR writes. */
+	clear_cpu_cap(c, X86_FEATURE_APIC_MSRS_FENCE);
 }
 
 #ifdef CONFIG_X86_32
